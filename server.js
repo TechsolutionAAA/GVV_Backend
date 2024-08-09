@@ -2,15 +2,19 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors"); // Import the cors package
+const http = require("http");
+const https = require("https");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Use cors middleware to handle CORS errors
 app.use(cors());
 
-app.get("/test", (req, res) => {
-  res.send("GVV Backend is running!");
+app.get("/", (req, res) => {
+  res.send(`
+      <h1>Welcome to Our Service</h1>
+      <p>This is the main endpoint of our backend service. If you're seeing this page, then the server is up and running!</p>
+    `);
 });
 
 app.get("/api/user/store_email", (req, res) => {
@@ -47,6 +51,6 @@ app.get("/api/user/store_email", (req, res) => {
   });
 });
 
-app.listen(() => {
-  console.log(`Server is running`);
+http.createServer(app).listen(443, () => {
+  console.log(`HTTP server running on port ${process.env.PORT}`);
 });
