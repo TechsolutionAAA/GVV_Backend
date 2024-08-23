@@ -19,34 +19,36 @@ app.get("/", (req, res) => {
 
 app.get("/api/user/store_email", (req, res) => {
   const email = req.query.email;
+  const country = req.query.country;
 
-  if (!email) {
-    return res.status(400).send("Email parameter is required");
+  if (!email || !country) {
+    return res.status(400).send("Email and country parameters are required");
   }
 
   const filePath = path.join(__dirname, "emails.txt");
 
-  // Read the file to check if the email already exists
+  // Read the file to check if the email and country combination already exists
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err && err.code !== "ENOENT") {
       console.error("Error reading file", err);
       return res.status(500).send("Internal Server Error");
     }
 
-    const emailList = data ? data.split("\n").filter(Boolean) : []; // Filter out empty lines
+    const emailCountryList = data ? data.split("\n").filter(Boolean) : []; // Filter out empty lines
+    const emailCountry = `${email},${country}`;
 
-    if (emailList.includes(email)) {
-      return res.send("Email already exists");
+    if (emailCountryList.includes(emailCountry)) {
+      return res.send("Email and country combination already exists");
     }
 
-    // Append the email to the file as it doesn't exist
-    fs.appendFile(filePath, `${email}\n`, (err) => {
+    // Append the email and country combination to the file as it doesn't exist
+    fs.appendFile(filePath, `${emailCountry}\n`, (err) => {
       if (err) {
         console.error("Error writing to file", err);
         return res.status(500).send("Internal Server Error");
       }
 
-      res.send("Email stored successfully");
+      res.send("Email and country stored successfully");
     });
   });
 });
